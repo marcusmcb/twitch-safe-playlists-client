@@ -33,12 +33,31 @@ const App = () => {
 	}
 
 	const getSafePlaylistLink = async (spotifyUrl) => {
-		const response = await axios.post(playlistLambdaUrl, {
-			playlistUrl: spotifyUrl,
-		})
+		try {
+			const response = await axios.post(
+				playlistLambdaUrl,
+				{
+					playlistUrl: spotifyUrl, // Send the payload directly
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',						
+					},
+				}
+			)
+
+			if (response) {
+				console.log('Response from Lambda:', response.data.url)
+				setNewSpotifyUrl(response.data.url)
+			}
+			
+		} catch (error) {
+			console.error('Error getting safe playlist link:', error)
+			setIsProcessing(false)
+		}
 	}
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		const isValidUrl = validateUrl(spotifyUrl)
 		if (!isValidUrl) {
 			console.log('Invalid URL submitted:', spotifyUrl)
@@ -48,7 +67,7 @@ const App = () => {
 			setIsValidUrl(true)
 			setIsProcessing(true)
 			console.log('Valid URL submitted:', spotifyUrl)
-			getSafePlaylistLink(spotifyUrl)
+			await getSafePlaylistLink(spotifyUrl)
 			// Placeholder for further processing logic
 		}
 	}
