@@ -1,0 +1,20 @@
+.playlist-form {
+	padding: 20px;
+	text-align: center;
+}
+
+.form-row {
+	margin: 15px 0;
+}
+
+.playlist-input {
+	width: 60%;
+	padding: 10px;
+	font-size: 16px;
+}
+
+.submit-button {
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+}

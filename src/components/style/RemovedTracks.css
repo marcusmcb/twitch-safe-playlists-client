@@ -1,0 +1,9 @@
+.removed-tracks {
+	padding: 20px;
+	text-align: center;
+}
+
+.removed-tracks h2 {
+	font-size: 18px;
+	font-weight: bold;
+}
