@@ -1,6 +1,5 @@
-// src/components/RemovedTracks.js
 import React from 'react'
-import './style/RemovedTracks.css' // We'll create this file for styling
+import './style/RemovedTracks.css' 
 
 const RemovedTracks = () => {
 	return (

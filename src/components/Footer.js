@@ -1,6 +1,5 @@
-// src/components/Footer.js
 import React from 'react'
-import './style/Footer.css' // We'll create this file for styling
+import './style/Footer.css'
 
 const Footer = () => {
 	const currentYear = new Date().getFullYear()

@@ -1,4 +1,3 @@
-// src/components/DisplayPanel.js
 import React from 'react'
 import './style/DisplayPanel.css' 
 

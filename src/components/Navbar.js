@@ -1,4 +1,3 @@
-// src/components/Navbar.js
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
@@ -9,13 +8,13 @@ const Navbar = () => {
 	return (
 		<div className='navbar'>
 			<div className='navbar-item'>
-				<FontAwesomeIcon icon={faQuestionCircle} />
+				<FontAwesomeIcon className='navbar-icon' icon={faQuestionCircle} />
 			</div>
 			<div className='navbar-item'>
 				<h1>Twitch Safe Playlists</h1>
 			</div>
 			<div className='navbar-item'>
-				<FontAwesomeIcon icon={faSpotify} />
+				<FontAwesomeIcon className='navbar-icon' icon={faSpotify} />
 			</div>
 		</div>
 	)

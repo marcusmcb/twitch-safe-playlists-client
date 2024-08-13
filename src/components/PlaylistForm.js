@@ -1,6 +1,5 @@
-// src/components/PlaylistForm.js
 import React from 'react'
-import './style/PlaylistForm.css' // We'll create this file for styling
+import './style/PlaylistForm.css'
 
 const PlaylistForm = () => {
 	return (
