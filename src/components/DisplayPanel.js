@@ -1,15 +1,17 @@
 import React from 'react'
-import './style/DisplayPanel.css' 
+import './style/DisplayPanel.css'
 
-const DisplayPanel = ({ url }) => {
+const DisplayPanel = ({ isProcessing, newSpotifyUrl }) => {
 	return (
 		<div className='display-panel'>
-			{url ? (
-				<a href={url} target='_blank' rel='noopener noreferrer'>
-					{url}
+			{newSpotifyUrl !== '' ? (
+				<a href={newSpotifyUrl} target='_blank' rel='noopener noreferrer'>
+					{newSpotifyUrl}
 				</a>
-			) : (
+			) : isProcessing ? (
 				<p>Creating your Twitch safe playlist...</p>
+			) : (
+				<p>Your new playlist link will appear here.</p>
 			)}
 		</div>
 	)
