@@ -7,13 +7,12 @@ const Footer = () => {
 	return (
 		<div className='footer'>
 			<p>
-				Built by MCB, {currentYear}.{' '}
 				<a
 					href='https://www.mcbportfolio.com'
 					target='_blank'
 					rel='noopener noreferrer'
 				>
-					Visit my portfolio
+					Built by MCB, {currentYear}.{' '}
 				</a>
 			</p>
 		</div>

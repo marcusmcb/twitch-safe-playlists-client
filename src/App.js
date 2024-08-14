@@ -14,7 +14,7 @@ const App = () => {
 	const [spotifyUrl, setSpotifyUrl] = useState('')
 	const [isValidUrl, setIsValidUrl] = useState(true)
 	const [isProcessing, setIsProcessing] = useState(false)
-	const [isComplete, setIsComplete] = useState(false)
+	const [isComplete, setIsComplete] = useState(true)
 	const [newSpotifyUrl, setNewSpotifyUrl] = useState('')
 	const [removedTracks, setRemovedTracks] = useState([])
 
@@ -37,20 +37,20 @@ const App = () => {
 			const response = await axios.post(
 				playlistLambdaUrl,
 				{
-					playlistUrl: spotifyUrl, // Send the payload directly
+					playlistUrl: spotifyUrl,
 				},
 				{
 					headers: {
-						'Content-Type': 'application/json',						
+						'Content-Type': 'application/json',
 					},
 				}
 			)
 
 			if (response) {
-				console.log('Response from Lambda:', response.data.url)
+				console.log('Response from Lambda:', response.data)
 				setNewSpotifyUrl(response.data.url)
+				setRemovedTracks(response.data.removed_tracks)
 			}
-			
 		} catch (error) {
 			console.error('Error getting safe playlist link:', error)
 			setIsProcessing(false)
@@ -58,16 +58,23 @@ const App = () => {
 	}
 
 	const handleSubmit = async () => {
+		setIsProcessing(false)
+		setIsComplete(false)
+		setRemovedTracks([])
+		setNewSpotifyUrl('')
 		const isValidUrl = validateUrl(spotifyUrl)
 		if (!isValidUrl) {
 			console.log('Invalid URL submitted:', spotifyUrl)
 			setIsValidUrl(false)
+			setIsComplete(true)
 			return
 		} else {
 			setIsValidUrl(true)
 			setIsProcessing(true)
 			console.log('Valid URL submitted:', spotifyUrl)
 			await getSafePlaylistLink(spotifyUrl)
+			setSpotifyUrl('')
+			setIsComplete(true)
 			// Placeholder for further processing logic
 		}
 	}
@@ -80,9 +87,10 @@ const App = () => {
 				onUrlChange={handleUrlChange}
 				onSubmit={handleSubmit}
 				isValidUrl={isValidUrl}
+				isComplete={isComplete}
 			/>
 			<DisplayPanel isProcessing={isProcessing} newSpotifyUrl={newSpotifyUrl} />
-			<RemovedTracks />
+			<RemovedTracks removedTracks={removedTracks} />
 			<Footer />
 		</div>
 	)

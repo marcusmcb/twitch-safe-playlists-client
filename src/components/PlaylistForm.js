@@ -1,7 +1,7 @@
 import React from 'react'
 import './style/PlaylistForm.css'
 
-const PlaylistForm = ({ spotifyUrl, onUrlChange, onSubmit, isValidUrl }) => {
+const PlaylistForm = ({ spotifyUrl, onUrlChange, onSubmit, isValidUrl, isComplete }) => {
 	return (
 		<div className='playlist-form'>
 			<div className='form-row'>
@@ -21,7 +21,7 @@ const PlaylistForm = ({ spotifyUrl, onUrlChange, onSubmit, isValidUrl }) => {
 				/>
 			</div>
 			<div className='form-row'>
-				<button className='submit-button' onClick={onSubmit}>
+				<button className='submit-button' onClick={onSubmit} disabled={!isComplete}>
 					Submit
 				</button>
 			</div>
