@@ -9,7 +9,7 @@ import './style/DisplayPanel.css'
 
 // add footer with link to portfolio at bottom of App.js
 
-// add logic to store original Spotify URL 
+// add logic to store original Spotify URL
 // as originalUrlDisplay
 
 // add option to keep or remove invalid tracks
@@ -25,7 +25,10 @@ const DisplayPanel = ({
 	newSpotifyUrl,
 	removedTracks,
 	invalidTracks,
+	hasError,
 }) => {
+	console.log('New Spotify URL:', newSpotifyUrl)
+	console.log("Has Error:", hasError)	
 	return (
 		<div className='display-panel'>
 			<h3>Your new playlist link:</h3>
@@ -43,8 +46,11 @@ const DisplayPanel = ({
 						</>
 					)}
 				</div>
+			
 			) : isProcessing ? (
 				<p>Creating your Twitch safe playlist...</p>
+			) : hasError ? (
+				<>Hmmm... looks like something went wrong. Try it again.</>
 			) : (
 				<p>Your new playlist link will appear here when ready.</p>
 			)}

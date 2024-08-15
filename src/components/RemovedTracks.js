@@ -44,7 +44,7 @@ const RemovedTracks = ({ removedTracks, invalidTracks, newSpotifyUrl }) => {
 			<ul>
 				{invalidTracks.map((track, index) => (
 					<li key={index}>
-						{index + 1}. {track.title} - {track.artist}
+						{index + 1}. {track.artist} - {track.title}
 					</li>
 				))}
 			</ul>

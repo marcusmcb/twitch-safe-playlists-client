@@ -11,6 +11,7 @@ const App = () => {
 	const [newSpotifyUrl, setNewSpotifyUrl] = useState('')
 	const [isValidUrl, setIsValidUrl] = useState(true)
 	const [isProcessing, setIsProcessing] = useState(false)
+	const [hasError, setHasError] = useState(false)
 	const [isComplete, setIsComplete] = useState(true)	
 	const [removedTracks, setRemovedTracks] = useState([])
 	const [invalidTracks, setInvalidTracks] = useState([])
@@ -45,10 +46,12 @@ const App = () => {
 		} catch (error) {
 			console.error('Error getting safe playlist link:', error)
 			setIsProcessing(false)
+			setHasError(true)	
 		}
 	}
 
 	const handleSubmit = async () => {
+		setHasError(false)
 		setIsProcessing(false)
 		setIsComplete(false)
 		setRemovedTracks([])
@@ -85,6 +88,7 @@ const App = () => {
 						newSpotifyUrl={newSpotifyUrl}
 						removedTracks={removedTracks}
 						invalidTracks={invalidTracks}
+						hasError={hasError}
 					/>
 				</div>
 				<div className='right-panel'>
