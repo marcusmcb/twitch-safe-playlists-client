@@ -1,20 +1,36 @@
+/* src/components/style/PlaylistForm.css */
+
 .playlist-form {
-	padding: 20px;
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start; /* Align items to the left */
+	color: #fff;
 }
 
-.form-row {
-	margin: 15px 0;
-}
-
-.playlist-input {
-	width: 60%;
+.playlist-form input {
+	width: 70%;
 	padding: 10px;
-	font-size: 16px;
+	margin: 15px 0; /* 15px margin on the top and bottom */
+	font-family: inherit;
+	font-size: 1em;
+	border-radius: 5px;
+	border: 1px solid #def457;
+	background-color: #2e3047;
+	color: #fff;
 }
 
-.submit-button {
+.playlist-form button {
+	background-color: #2e3047;
+	color: white;
+	border: none;
 	padding: 10px 20px;
-	font-size: 16px;
+	font-size: 1em;
+	border-radius: 5px;
 	cursor: pointer;
+	margin: 15px 0; /* 15px margin on the top and bottom */
+}
+
+.playlist-form button:hover {
+	background-color: #def457;
+	color: black;
 }

@@ -11,3 +11,105 @@
 		padding: 10px;
 	}
 }
+/* src/App.css */
+body {
+	font-family: 'JetBrains Mono', monospace;
+	background-color: #201f51;
+	color: #fff;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+}
+
+.app {
+	max-width: 1200px;
+	padding: 20px;
+	background-color: #201f51;
+}
+
+.main-container {
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+}
+
+.left-panel,
+.right-panel {
+	width: 50%;
+	margin: 0px 15px 0px 15px;
+	/* border: 1px solid white; */
+}
+
+.left-panel {
+	display: flex;
+	flex-direction: column;
+}
+
+.right-panel {
+	display: flex;
+	flex-direction: column;
+}
+
+.line {
+	height: 2px;
+	background-color: #fff !important;
+	margin: 10px 0;
+	width: fit-content;
+}
+
+h1 {
+	font-size: 32px;
+	margin: 0;
+}
+
+h2 {
+	color: #f4ac57;
+	font-size: 32px;
+}
+
+h3 {
+	color: #def457;
+	font-size: 20px;
+	margin: 0;
+}
+
+a {
+	color: #def457;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+li {
+	font-size: 12px;
+	line-height: 1.5;
+	color: #fff;
+	margin-bottom: 10px;
+}
+
+.invalid-tracks {
+	color: #def457;
+	margin-top: 20px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+	.main-container {
+		flex-direction: column;
+	}
+
+	.left-panel,
+	.right-panel {
+		width: 100%;
+	}
+}

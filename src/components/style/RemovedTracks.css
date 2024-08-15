@@ -1,9 +1,5 @@
-.removed-tracks {
-	padding: 20px;
-	text-align: center;
-}
-
-.removed-tracks h2 {
-	font-size: 18px;
+.songs-removed-title {
+	font-size: 32px;
 	font-weight: bold;
+	color: #f4ac57;
 }

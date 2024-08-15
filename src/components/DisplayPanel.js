@@ -1,17 +1,20 @@
+// src/components/DisplayPanel.js
 import React from 'react'
 import './style/DisplayPanel.css'
 
 const DisplayPanel = ({ isProcessing, newSpotifyUrl }) => {
 	return (
 		<div className='display-panel'>
-			{newSpotifyUrl !== '' ? (
-				<a href={newSpotifyUrl} target='_blank' rel='noopener noreferrer'>
-					{newSpotifyUrl}
-				</a>
-			) : isProcessing ? (
+			<h3>Your new playlist link:</h3>
+			{/* <div className='line'></div> */}
+			{isProcessing ? (
 				<p>Creating your Twitch safe playlist...</p>
 			) : (
-				<p>Your new playlist link will appear here.</p>
+				newSpotifyUrl && (
+					<a href={newSpotifyUrl} target='_blank' rel='noopener noreferrer'>
+						{newSpotifyUrl}
+					</a>
+				)
 			)}
 		</div>
 	)

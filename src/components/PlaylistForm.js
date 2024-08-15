@@ -1,30 +1,30 @@
+// src/components/PlaylistForm.js
 import React from 'react'
 import './style/PlaylistForm.css'
 
-const PlaylistForm = ({ spotifyUrl, onUrlChange, onSubmit, isValidUrl, isComplete }) => {
+const PlaylistForm = ({
+	spotifyUrl,
+	onUrlChange,
+	onSubmit,
+	isValidUrl,
+	isComplete,
+}) => {
 	return (
 		<div className='playlist-form'>
-			<div className='form-row'>
-				{isValidUrl === true ? (
-					<p>Paste your original Spotify link into the field below</p>
-				) : (
-					<p>Please enter a valid Spotify URL</p>
-				)}
-			</div>
-			<div className='form-row'>
-				<input
-					type='text'
-					placeholder='enter your Spotify link here'
-					className='playlist-input'
-					value={spotifyUrl}
-					onChange={(e) => onUrlChange(e.target.value)}
-				/>
-			</div>
-			<div className='form-row'>
-				<button className='submit-button' onClick={onSubmit} disabled={!isComplete}>
-					Submit
-				</button>
-			</div>
+			<h1>Twitch Safe Playlists</h1>
+			<div className='line'></div>
+			<p>
+				Paste in your Spotify playlist link below to return a new playlist link
+				that's safe for use in your next Twitch live-stream.
+			</p>
+			<input
+				type='text'
+				value={spotifyUrl}
+				onChange={(e) => onUrlChange(e.target.value)}
+				placeholder='enter your Spotify playlist url here'
+				className={!isValidUrl ? 'invalid' : ''}
+			/>
+			<button onClick={onSubmit}>Get Safe Playlist</button>
 		</div>
 	)
 }

@@ -1,14 +1,3 @@
 .display-panel {
-	padding: 20px;
-	text-align: center;
-}
-
-.display-panel p {
-	font-size: 18px;
-}
-
-.display-panel a {
-	color: #1db954; /* Spotify green */
-	text-decoration: none;
-	font-size: 18px;
+	margin-top: 15px;
 }
