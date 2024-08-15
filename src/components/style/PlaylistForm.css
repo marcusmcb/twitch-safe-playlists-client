@@ -28,9 +28,21 @@
 	border-radius: 5px;
 	cursor: pointer;
 	margin: 15px 0; /* 15px margin on the top and bottom */
+	border: 1px solid #def457;
 }
 
 .playlist-form button:hover {
 	background-color: #def457;
 	color: black;
+}
+
+.playlist-form button:disabled {
+	background-color: #7a7a7a; /* Grey out the button when disabled */
+	cursor: not-allowed; /* Show a "not allowed" cursor when hovering over the button */
+}
+
+.disabled-button {
+	background-color: #7a7a7a;
+	color: #2e2e2e;
+	cursor: not-allowed;
 }

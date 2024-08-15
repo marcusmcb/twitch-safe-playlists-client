@@ -8,11 +8,12 @@ import './App.css'
 
 const App = () => {
 	const [spotifyUrl, setSpotifyUrl] = useState('')
+	const [newSpotifyUrl, setNewSpotifyUrl] = useState('')
 	const [isValidUrl, setIsValidUrl] = useState(true)
 	const [isProcessing, setIsProcessing] = useState(false)
-	const [isComplete, setIsComplete] = useState(true)
-	const [newSpotifyUrl, setNewSpotifyUrl] = useState('')
+	const [isComplete, setIsComplete] = useState(true)	
 	const [removedTracks, setRemovedTracks] = useState([])
+	const [invalidTracks, setInvalidTracks] = useState([])
 
 	const playlistLambdaUrl =
 		'https://z0mo4en8c9.execute-api.us-west-2.amazonaws.com/production/playlist'
@@ -39,6 +40,7 @@ const App = () => {
 				console.log('Response:', response.data)
 				setNewSpotifyUrl(response.data.url)
 				setRemovedTracks(response.data.removed_tracks)
+				setInvalidTracks(response.data.invalid_tracks)
 			}
 		} catch (error) {
 			console.error('Error getting safe playlist link:', error)
@@ -50,6 +52,7 @@ const App = () => {
 		setIsProcessing(false)
 		setIsComplete(false)
 		setRemovedTracks([])
+		setInvalidTracks([])
 		setNewSpotifyUrl('')
 		const isValidUrl = validateUrl(spotifyUrl)
 		if (!isValidUrl) {
@@ -59,9 +62,10 @@ const App = () => {
 		} else {
 			setIsValidUrl(true)
 			setIsProcessing(true)
-			await getSafePlaylistLink(spotifyUrl)
-			setSpotifyUrl('')
-			setIsComplete(true)
+			await getSafePlaylistLink(spotifyUrl).then(() => {
+				setSpotifyUrl('')
+				setIsComplete(true)
+			})
 		}
 	}
 
@@ -79,10 +83,16 @@ const App = () => {
 					<DisplayPanel
 						isProcessing={isProcessing}
 						newSpotifyUrl={newSpotifyUrl}
+						removedTracks={removedTracks}
+						invalidTracks={invalidTracks}
 					/>
 				</div>
 				<div className='right-panel'>
-					<RemovedTracks removedTracks={removedTracks} />
+					<RemovedTracks
+						removedTracks={removedTracks}
+						invalidTracks={invalidTracks}
+						newSpotifyUrl={newSpotifyUrl}
+					/>
 				</div>
 			</div>
 		</div>

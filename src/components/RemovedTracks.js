@@ -1,13 +1,30 @@
-// src/components/RemovedTracks.js
 import React from 'react'
 import './style/RemovedTracks.css'
 
-const RemovedTracks = ({ removedTracks }) => {
+const RemovedTracks = ({ removedTracks, invalidTracks, newSpotifyUrl }) => {
 	return (
 		<div className='removed-tracks'>
-			<div className='songs-removed-title'>Songs Removed: </div>
+			<div className='songs-removed-title'>
+				{newSpotifyUrl !== '' ? (
+					removedTracks.length + invalidTracks.length > 0 ? (
+						<>Songs Removed ({removedTracks.length + invalidTracks.length}):</>
+					) : (
+						<>No Songs Removed</>
+					)
+				) : (
+					<></>
+				)}
+			</div>
 			<div className='line'></div>
-			<h3>Restricted Artists:</h3>
+			{newSpotifyUrl !== '' ? (
+				<h3>
+					{removedTracks.length > 0
+						? 'Restricted Artists Found:'
+						: 'No restricted artists found'}
+				</h3>
+			) : (
+				<></>
+			)}
 			<ul>
 				{removedTracks.map((track, index) => (
 					<li key={index}>
@@ -15,8 +32,22 @@ const RemovedTracks = ({ removedTracks }) => {
 					</li>
 				))}
 			</ul>
-			<h3 className='invalid-tracks'>Invalid Tracks:</h3>
-			<ul>{/* Map over invalid tracks in the same way */}</ul>
+			{newSpotifyUrl !== '' ? (
+				<h3 className='invalid-tracks'>
+					{invalidTracks.length > 0
+						? 'Invalid Tracks Found:'
+						: 'No invalid tracks detected'}
+				</h3>
+			) : (
+				<></>
+			)}
+			<ul>
+				{invalidTracks.map((track, index) => (
+					<li key={index}>
+						{index + 1}. {track.title} - {track.artist}
+					</li>
+				))}
+			</ul>
 		</div>
 	)
 }

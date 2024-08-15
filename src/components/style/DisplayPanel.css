@@ -1,3 +1,11 @@
 .display-panel {
 	margin-top: 15px;
 }
+
+.new-spotify-url {
+	margin-top: 15px;	
+}
+
+.new-spotify-url a {
+	color: white;
+}
