@@ -14,11 +14,13 @@ import './style/DisplayPanel.css'
 
 // add option to keep or remove invalid tracks
 
+// add copyright symbols on any text mentions of
+// either Twitch or Spotify throughout the UI
+
 // add explainer pop-ups on hover for how
 // the site functionality works
 
-// add error response handler for the UI
-// when API Gateway or Lambda function times out or fails
+// finish domain configuration and testing
 
 const DisplayPanel = ({
 	isProcessing,
@@ -27,12 +29,9 @@ const DisplayPanel = ({
 	invalidTracks,
 	hasError,
 }) => {
-	console.log('New Spotify URL:', newSpotifyUrl)
-	console.log("Has Error:", hasError)	
 	return (
 		<div className='display-panel'>
 			<h3>Your new playlist link:</h3>
-			{/* <div className='line'></div> */}
 			{newSpotifyUrl !== '' ? (
 				<div className='new-spotify-url'>
 					{removedTracks.length + invalidTracks.length > 0 ? (
@@ -46,9 +45,15 @@ const DisplayPanel = ({
 						</>
 					)}
 				</div>
-			
 			) : isProcessing ? (
-				<p>Creating your Twitch safe playlist...</p>
+				<p>
+					Creating your Twitch safe playlist
+					<span className='dots'>
+						<span>.</span>
+						<span>.</span>
+						<span>.</span>
+					</span>
+				</p>
 			) : hasError ? (
 				<>Hmmm... looks like something went wrong. Try it again.</>
 			) : (
