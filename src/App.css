@@ -11,7 +11,7 @@
 		padding: 10px;
 	}
 }
-/* src/App.css */
+
 body {
 	font-family: 'JetBrains Mono', monospace;
 	background-color: #201f51;
@@ -40,6 +40,7 @@ body {
 .right-panel {
 	width: 50%;
 	margin: 0px 15px 0px 15px;
+	overflow-wrap: break-word; /* Ensure content does not overflow */
 	/* border: 1px solid white; */
 }
 
@@ -102,7 +103,6 @@ li {
 	margin-top: 20px;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
 	.main-container {
 		flex-direction: column;
