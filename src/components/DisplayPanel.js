@@ -1,9 +1,6 @@
 import React from 'react'
 import './style/DisplayPanel.css'
 
-// add animated elipsis or other loading element
-// to run while isProcessing is true
-
 // add horizontal lines throughout the UI
 // as planned
 
@@ -14,13 +11,8 @@ import './style/DisplayPanel.css'
 
 // add option to keep or remove invalid tracks
 
-// add copyright symbols on any text mentions of
-// either Twitch or Spotify throughout the UI
-
 // add explainer pop-ups on hover for how
 // the site functionality works
-
-// finish domain configuration and testing
 
 const DisplayPanel = ({
 	isProcessing,
@@ -47,7 +39,7 @@ const DisplayPanel = ({
 				</div>
 			) : isProcessing ? (
 				<p>
-					Creating your Twitch safe playlist
+					Creating your Twitch<sup>&copy;</sup> safe playlist
 					<span className='dots'>
 						<span>.</span>
 						<span>.</span>

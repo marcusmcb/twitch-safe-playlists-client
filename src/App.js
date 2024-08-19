@@ -4,6 +4,7 @@ import axios from 'axios'
 import PlaylistForm from './components/PlaylistForm'
 import DisplayPanel from './components/DisplayPanel'
 import RemovedTracks from './components/RemovedTracks'
+import AdditionalInfo from './components/AdditionalInfo'
 import './App.css'
 
 const App = () => {
@@ -12,9 +13,10 @@ const App = () => {
 	const [isValidUrl, setIsValidUrl] = useState(true)
 	const [isProcessing, setIsProcessing] = useState(false)
 	const [hasError, setHasError] = useState(false)
-	const [isComplete, setIsComplete] = useState(true)	
+	const [isComplete, setIsComplete] = useState(true)
 	const [removedTracks, setRemovedTracks] = useState([])
 	const [invalidTracks, setInvalidTracks] = useState([])
+	const [viewInfoPanel, setViewInfoPanel] = useState(false)
 
 	const playlistLambdaUrl =
 		'https://z0mo4en8c9.execute-api.us-west-2.amazonaws.com/production/playlist'
@@ -46,7 +48,7 @@ const App = () => {
 		} catch (error) {
 			console.error('Error getting safe playlist link:', error)
 			setIsProcessing(false)
-			setHasError(true)	
+			setHasError(true)
 		}
 	}
 
@@ -82,6 +84,7 @@ const App = () => {
 						onSubmit={handleSubmit}
 						isValidUrl={isValidUrl}
 						isComplete={isComplete}
+						setViewInfoPanel={setViewInfoPanel}
 					/>
 					<DisplayPanel
 						isProcessing={isProcessing}
@@ -91,13 +94,19 @@ const App = () => {
 						hasError={hasError}
 					/>
 				</div>
-				<div className='right-panel'>
-					<RemovedTracks
-						removedTracks={removedTracks}
-						invalidTracks={invalidTracks}
-						newSpotifyUrl={newSpotifyUrl}
-					/>
-				</div>
+				{viewInfoPanel ? (
+					<div className='right-panel'>
+						<AdditionalInfo/>
+					</div>
+				) : (
+					<div className='right-panel'>
+						<RemovedTracks
+							removedTracks={removedTracks}
+							invalidTracks={invalidTracks}
+							newSpotifyUrl={newSpotifyUrl}
+						/>
+					</div>
+				)}
 			</div>
 		</div>
 	)

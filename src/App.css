@@ -19,13 +19,13 @@ body {
 	margin: 0;
 	padding: 0;
 	display: flex;
-	justify-content: center;
+	/* justify-content: center; */
 	align-items: center;
 	min-height: 100vh;
 }
 
 .app {
-	max-width: 1200px;
+	/* max-width: 1200px; */
 	padding: 20px;
 	background-color: #201f51;
 }
@@ -40,8 +40,7 @@ body {
 .right-panel {
 	width: 50%;
 	margin: 0px 15px 0px 15px;
-	overflow-wrap: break-word; /* Ensure content does not overflow */
-	/* border: 1px solid white; */
+	overflow-wrap: break-word;
 }
 
 .left-panel {
@@ -103,6 +102,10 @@ li {
 	margin-top: 20px;
 }
 
+.additional-info-line {
+	visibility: hidden;
+}
+
 @media (max-width: 768px) {
 	.main-container {
 		flex-direction: column;
@@ -111,5 +114,9 @@ li {
 	.left-panel,
 	.right-panel {
 		width: 100%;
+	}
+
+	.additional-info-line {
+		visibility: visible;
 	}
 }
