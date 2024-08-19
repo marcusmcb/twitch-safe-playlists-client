@@ -1,4 +1,7 @@
 /* src/components/style/PlaylistForm.css */
+sup {
+	font-size: 12px;
+}
 
 .playlist-form {
 	display: flex;

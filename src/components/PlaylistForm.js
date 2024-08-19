@@ -10,12 +10,12 @@ const PlaylistForm = ({
 }) => {
 	return (
 		<div className='playlist-form'>
-			<h1>Twitch Safe Playlists</h1>
+			<h1>Twitch<sup>&copy;</sup> Safe Playlists</h1>
 			<div className='line'></div>
 			{isValidUrl === true ? (
 				<p>
-					Enter in your Spotify playlist link below to return a new playlist
-					link that's safe for use in your next Twitch live-stream.
+					Enter in your Spotify<sup>&copy;</sup> playlist link below to return a new playlist
+					link that's free of <a href='https://www.twitch.tv/dj-signup#dj-music-catalog' target='_blank' rel='noopener noreferrer'>restricted artists</a> and safe for use in your next Twitch<sup>&copy;</sup> live-stream.
 				</p>
 			) : (
 				<p>
