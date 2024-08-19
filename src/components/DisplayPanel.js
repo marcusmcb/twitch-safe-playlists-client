@@ -47,7 +47,7 @@ const DisplayPanel = ({
 					</span>
 				</p>
 			) : hasError ? (
-				<>Hmmm... looks like something went wrong. Try it again.</>
+				<>It appears something went wrong. Try it again with another playlist link.</>
 			) : (
 				<p>Your new playlist link will appear here when ready.</p>
 			)}

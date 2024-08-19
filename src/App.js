@@ -96,7 +96,7 @@ const App = () => {
 				</div>
 				{viewInfoPanel ? (
 					<div className='right-panel'>
-						<AdditionalInfo/>
+						<AdditionalInfo />
 					</div>
 				) : (
 					<div className='right-panel'>
@@ -107,6 +107,18 @@ const App = () => {
 						/>
 					</div>
 				)}
+			</div>
+			<div>
+				<div className='footer'>
+					Built by{' '}
+					<a
+						href='https://www.mcbportfolio.com'
+						target='_blank'
+						rel='noopener noreferrer'
+					>
+						MCB
+					</a>
+				</div>
 			</div>
 		</div>
 	)
