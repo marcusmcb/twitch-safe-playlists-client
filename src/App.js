@@ -112,7 +112,7 @@ const App = () => {
 				<div className='footer'>
 					Built by{' '}
 					<a
-						href='https://www.mcbportfolio.com'
+						href='https://www.mcbportfolio.com/#/contact'
 						target='_blank'
 						rel='noopener noreferrer'
 					>
