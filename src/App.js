@@ -23,7 +23,7 @@ const App = () => {
 
 	const validateUrl = (url) => {
 		const spotifyUrlPattern =
-			/^https:\/\/open.spotify.com\/playlist\/[a-zA-Z0-9]+$/
+			/^https:\/\/open.spotify.com\/playlist\/[a-zA-Z0-9]+(\?.*)?$/
 		return spotifyUrlPattern.test(url)
 	}
 
