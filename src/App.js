@@ -13,6 +13,7 @@ const App = () => {
 	const [isValidUrl, setIsValidUrl] = useState(true)
 	const [isProcessing, setIsProcessing] = useState(false)
 	const [hasError, setHasError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState('')
 	const [isComplete, setIsComplete] = useState(true)
 	const [removedTracks, setRemovedTracks] = useState([])
 	const [invalidTracks, setInvalidTracks] = useState([])
@@ -44,9 +45,15 @@ const App = () => {
 				setNewSpotifyUrl(response.data.url)
 				setRemovedTracks(response.data.removed_tracks)
 				setInvalidTracks(response.data.invalid_tracks)
+				setErrorMessage('')
 			}
 		} catch (error) {
 			console.error('Error getting safe playlist link:', error)
+			const serverMessage =
+				error?.response?.data?.message ||
+				error?.response?.data?.error ||
+				'It appears something went wrong. Try it again with another playlist link.'
+			setErrorMessage(serverMessage)
 			setIsProcessing(false)
 			setHasError(true)
 		}
@@ -54,6 +61,7 @@ const App = () => {
 
 	const handleSubmit = async () => {
 		setHasError(false)
+		setErrorMessage('')
 		setIsProcessing(false)
 		setIsComplete(false)
 		setRemovedTracks([])
@@ -92,6 +100,7 @@ const App = () => {
 						removedTracks={removedTracks}
 						invalidTracks={invalidTracks}
 						hasError={hasError}
+						errorMessage={errorMessage}
 					/>
 				</div>
 				{viewInfoPanel ? (

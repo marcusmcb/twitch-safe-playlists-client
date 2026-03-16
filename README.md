@@ -39,6 +39,19 @@ Simply paste in a valid, public Spotify playlist URL into the field and click "G
 
 For this app's intended use case, a typical playlist will contain somewhere between 300 and 600 individual songs.  This app has been tested for playlists contains up to 1k songs without issue.  Larger playlists may and likely will time out, returning an error message which prompts the user to submit a different playlist link.
 
+### Spotify Web API (Feb 2026) Notes
+
+Spotify’s February 2026 Web API changes introduce breaking endpoint and behavior updates for **Development Mode** apps.
+
+Key impact for this project:
+
+* Playlist item endpoints moved from `/playlists/{id}/tracks` to `/playlists/{id}/items` and the page size max is now **50**.
+* `POST /users/{user_id}/playlists` has been removed; use `POST /me/playlists`.
+* `GET /users/{id}` and `GET /users/{id}/playlists` have been removed for Dev Mode; use `GET /me` / `GET /me/playlists`.
+* **Important behavior change (Dev Mode):** playlist contents are only available for playlists the authorized user **owns or collaborates on**. Public playlists that the user does not own will return metadata only and playlist item fetches will be denied.
+
+If this site is intended for broader/public use, you will likely need **Extended Quota Mode** (or equivalent elevated access) so that reading arbitrary public playlist contents remains possible.
+
 ### Future Development:
 
 If requested, I can add an option in the UI to include the "invalid tracks" that are currently removed in the new playlist creation process.

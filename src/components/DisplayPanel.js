@@ -20,6 +20,7 @@ const DisplayPanel = ({
 	removedTracks,
 	invalidTracks,
 	hasError,
+	errorMessage,
 }) => {
 	return (
 		<div className='display-panel'>
@@ -47,7 +48,10 @@ const DisplayPanel = ({
 					</span>
 				</p>
 			) : hasError ? (
-				<>It appears something went wrong. Try it again with another playlist link.</>
+				<>
+					{errorMessage ||
+						'It appears something went wrong. Try it again with another playlist link.'}
+				</>
 			) : (
 				<p>Your new playlist link will appear here when ready.</p>
 			)}
