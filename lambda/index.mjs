@@ -5,17 +5,63 @@ const clientId = process.env.SPOTIFY_CLIENT_ID
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET
 const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN
 
+const CORS_HEADERS = {
+	'Content-Type': 'application/json',
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Spotify-Access-Token',
+	'Access-Control-Allow-Methods': 'OPTIONS,POST',
+}
+
 export const handler = async (event) => {
-	const body = JSON.parse(event.body)
+	// Handle CORS preflight.
+	if (event?.httpMethod === 'OPTIONS') {
+		return { statusCode: 200, headers: CORS_HEADERS, body: '' }
+	}
+
+	let body
+	try {
+		body = event?.body ? JSON.parse(event.body) : {}
+	} catch {
+		return {
+			statusCode: 400,
+			headers: CORS_HEADERS,
+			body: JSON.stringify({
+				code: 'REQUEST_BODY_INVALID_JSON',
+				message: 'Request body must be valid JSON.',
+			}),
+		}
+	}
+
 	console.log('EVENT: ', event.body)
-	console.log('PLAYLIST URL: ', body.playlistUrl)
+	console.log('PLAYLIST URL: ', body?.playlistUrl)
+
+	if (!body?.playlistUrl || typeof body.playlistUrl !== 'string') {
+		return {
+			statusCode: 400,
+			headers: CORS_HEADERS,
+			body: JSON.stringify({
+				code: 'PLAYLIST_URL_MISSING',
+				message: 'Missing required field: playlistUrl',
+			}),
+		}
+	}
+
+	const authHeader =
+		event?.headers?.Authorization ||
+		event?.headers?.authorization ||
+		event?.headers?.['X-Spotify-Access-Token'] ||
+		event?.headers?.['x-spotify-access-token'] ||
+		''
+	const bearerMatch = typeof authHeader === 'string' ? authHeader.match(/^Bearer\s+(.+)$/i) : null
+	const userAccessToken = bearerMatch ? bearerMatch[1] : null
+	const isUsingUserToken = Boolean(userAccessToken)
 
 	let fullTrackArray = []
 	let restrictedTracks = []
 	let trackUris = []
 	let invalidTracks = []
 
-	const getAccessToken = async () => {
+	const getServiceAccessToken = async () => {
 		if (!clientId || !clientSecret || !refreshToken) {
 			const err = new Error(
 				'Missing Spotify credentials (SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET / SPOTIFY_REFRESH_TOKEN).'
@@ -109,6 +155,14 @@ export const handler = async (event) => {
 				const spotifyMessage =
 					error?.response?.data?.error?.message ||
 					error?.response?.data?.error_description
+				if (status === 401) {
+					const err = new Error(
+						spotifyMessage || 'Spotify authorization expired. Please reconnect Spotify and try again.'
+					)
+					err.statusCode = 401
+					err.code = 'SPOTIFY_UNAUTHORIZED'
+					throw err
+				}
 				if (status === 403) {
 					const err = new Error(
 						spotifyMessage ||
@@ -217,10 +271,24 @@ export const handler = async (event) => {
 
 		console.log('Playlist ID:', playlistId)
 		console.log('Fetching Spotify playlist items...')
-		const accessToken = await getAccessToken()
-		const playlistTitle = await getSpotifyPlaylistTitle(accessToken, playlistId)
+		let serviceAccessToken
+		const readAccessToken = userAccessToken || (serviceAccessToken = await getServiceAccessToken())
+		const playlistTitle = await getSpotifyPlaylistTitle(readAccessToken, playlistId)
 		setTimeout(() => console.log('Playlist Title: ', playlistTitle), 1000)
-		const items = await getAllPlaylistTracks(accessToken, playlistId)
+		let items
+		try {
+			items = await getAllPlaylistTracks(readAccessToken, playlistId)
+		} catch (err) {
+			if (!isUsingUserToken && err?.code === 'SPOTIFY_PLAYLIST_ITEMS_FORBIDDEN') {
+				const help =
+					'This playlist is not accessible to the TwitchSafePlaylists account. To use this site without connecting Spotify: in Spotify, open the playlist → enable “Collaborative playlist” → use “Invite collaborators” and invite/share with “TwitchSafePlaylists”, then try again.'
+				const next = new Error(help)
+				next.statusCode = 403
+				next.code = 'SPOTIFY_PLAYLIST_NEEDS_COLLABORATOR'
+				throw next
+			}
+			throw err
+		}
 
 		for (const playlistItem of items) {
 			// Feb 2026 field rename: playlist items now use `item` (track/episode). Some responses may still include legacy `track`.
@@ -314,15 +382,18 @@ export const handler = async (event) => {
 			// return response
 		}
 
-		// create a new playlist
+		// Use the service account to create the safe playlist (legacy behavior)
+		if (!serviceAccessToken) {
+			serviceAccessToken = await getServiceAccessToken()
+		}
 		const newPlaylistData = await createNewPlaylist(
-			accessToken,
+			serviceAccessToken,
 			'(SAFE) ' + playlistTitle
 		)
 
 		// add the safe tracks to the new playlist
 		await addTracksToPlaylist(
-			accessToken,
+			serviceAccessToken,
 			newPlaylistData.playlistId,
 			trackUris
 		)
@@ -339,12 +410,7 @@ export const handler = async (event) => {
 		const newUrl = await getSafePlaylist(body.playlistUrl)
 		return {
 			statusCode: 200,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Headers': 'Content-Type',
-				'Access-Control-Allow-Methods': 'OPTIONS,POST',
-			},
+			headers: CORS_HEADERS,
 			body: JSON.stringify({
 				url: newUrl,
 				removed_tracks: restrictedTracks,
@@ -355,12 +421,7 @@ export const handler = async (event) => {
 		console.error('Lambda handler error:', error)
 		return {
 			statusCode: error?.statusCode || 500,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Headers': 'Content-Type',
-				'Access-Control-Allow-Methods': 'OPTIONS,POST',
-			},
+			headers: CORS_HEADERS,
 			body: JSON.stringify({
 				code: error?.code || 'UNKNOWN_ERROR',
 				message:

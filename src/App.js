@@ -1,10 +1,15 @@
 // src/App.js
-import React, { useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useMemo, useState } from 'react'
 import PlaylistForm from './components/PlaylistForm'
 import DisplayPanel from './components/DisplayPanel'
 import RemovedTracks from './components/RemovedTracks'
 import AdditionalInfo from './components/AdditionalInfo'
+import {
+	clearStoredAuth,
+	getStoredAccessToken,
+	handleSpotifyOAuthCallback,
+	startSpotifyLogin,
+} from './lib/spotifyAuth'
 import './App.css'
 
 const App = () => {
@@ -18,9 +23,17 @@ const App = () => {
 	const [removedTracks, setRemovedTracks] = useState([])
 	const [invalidTracks, setInvalidTracks] = useState([])
 	const [viewInfoPanel, setViewInfoPanel] = useState(false)
+	const [accessToken, setAccessToken] = useState(() => getStoredAccessToken())
 
-	const playlistLambdaUrl =
-		'https://z0mo4en8c9.execute-api.us-west-2.amazonaws.com/production/playlist'
+	const redirectUri = useMemo(() => {
+		// Use the same page as redirect target to avoid adding routes.
+		return `${window.location.origin}${window.location.pathname}`
+	}, [])
+
+	const backendUrl = useMemo(() => {
+		const url = process.env.REACT_APP_BACKEND_URL
+		return url && url.trim() ? url.trim() : null
+	}, [])
 
 	const validateUrl = (url) => {
 		const spotifyUrlPattern =
@@ -32,30 +45,77 @@ const App = () => {
 		setSpotifyUrl(url)
 	}
 
-	const getSafePlaylistLink = async (spotifyUrl) => {
-		try {
-			const response = await axios.post(
-				playlistLambdaUrl,
-				{ playlistUrl: spotifyUrl },
-				{ headers: { 'Content-Type': 'application/json' } }
-			)
-
-			if (response) {
-				console.log('Response:', response.data)
-				setNewSpotifyUrl(response.data.url)
-				setRemovedTracks(response.data.removed_tracks)
-				setInvalidTracks(response.data.invalid_tracks)
-				setErrorMessage('')
+	useEffect(() => {
+		// If we just returned from Spotify OAuth, exchange the code for an access token.
+		const run = async () => {
+			try {
+				const token = await handleSpotifyOAuthCallback({ redirectUri })
+				if (token) {
+					setAccessToken(token)
+				}
+			} catch (err) {
+				console.error('Spotify OAuth callback failed:', err)
+				setHasError(true)
+				setErrorMessage(err?.message || 'Spotify sign-in failed. Please try again.')
 			}
-		} catch (error) {
-			console.error('Error getting safe playlist link:', error)
-			const serverMessage =
-				error?.response?.data?.message ||
-				error?.response?.data?.error ||
-				'It appears something went wrong. Try it again with another playlist link.'
-			setErrorMessage(serverMessage)
-			setIsProcessing(false)
-			setHasError(true)
+		}
+		run()
+	}, [redirectUri])
+
+	const connectSpotify = async () => {
+		setHasError(false)
+		setErrorMessage('')
+		await startSpotifyLogin({ redirectUri })
+	}
+
+	const disconnectSpotify = () => {
+		clearStoredAuth()
+		setAccessToken(null)
+	}
+
+	const getSafePlaylistLink = async (spotifyUrl) => {
+		if (!backendUrl) {
+			throw new Error(
+				'Missing REACT_APP_BACKEND_URL. Set it to your API Gateway/Lambda endpoint and redeploy.'
+			)
+		}
+
+		try {
+			const headers = {
+				'Content-Type': 'application/json',
+			}
+			if (accessToken) {
+				headers.Authorization = `Bearer ${accessToken}`
+				headers['X-Spotify-Access-Token'] = `Bearer ${accessToken}`
+			}
+
+			const resp = await fetch(backendUrl, {
+				method: 'POST',
+				headers,
+				body: JSON.stringify({ playlistUrl: spotifyUrl }),
+			})
+
+			const data = await resp.json().catch(() => ({}))
+			if (!resp.ok) {
+				const message = data?.message || 'Failed to create safe playlist.'
+				const err = new Error(message)
+				err.status = resp.status
+				err.code = data?.code
+				throw err
+			}
+
+			setRemovedTracks(Array.isArray(data?.removed_tracks) ? data.removed_tracks : [])
+			setInvalidTracks(Array.isArray(data?.invalid_tracks) ? data.invalid_tracks : [])
+			if (!data?.url) {
+				throw new Error('Backend succeeded but returned no playlist URL.')
+			}
+			return data.url
+		} catch (err) {
+			if (err?.status === 401 && accessToken) {
+				disconnectSpotify()
+				throw new Error('Your Spotify session expired. Please connect Spotify again.')
+			}
+			throw err
 		}
 	}
 
@@ -75,10 +135,21 @@ const App = () => {
 		} else {
 			setIsValidUrl(true)
 			setIsProcessing(true)
-			await getSafePlaylistLink(spotifyUrl).then(() => {
+			try {
+				const newUrl = await getSafePlaylistLink(spotifyUrl)
+				setNewSpotifyUrl(newUrl)
 				setSpotifyUrl('')
+			} catch (err) {
+				console.error('Error creating safe playlist:', err)
+				setHasError(true)
+				setErrorMessage(
+					err?.message ||
+					'It appears something went wrong. Try it again with another playlist link.'
+				)
+			} finally {
+				setIsProcessing(false)
 				setIsComplete(true)
-			})
+			}
 		}
 	}
 
@@ -90,6 +161,9 @@ const App = () => {
 						spotifyUrl={spotifyUrl}
 						onUrlChange={handleUrlChange}
 						onSubmit={handleSubmit}
+						isAuthed={Boolean(accessToken)}
+						onConnect={connectSpotify}
+						onDisconnect={disconnectSpotify}
 						isValidUrl={isValidUrl}
 						isComplete={isComplete}
 						setViewInfoPanel={setViewInfoPanel}

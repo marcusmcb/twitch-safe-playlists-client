@@ -7,6 +7,9 @@ const PlaylistForm = ({
 	spotifyUrl,
 	onUrlChange,
 	onSubmit,
+	isAuthed,
+	onConnect,
+	onDisconnect,
 	isValidUrl,
 	isComplete,
 	setViewInfoPanel,
@@ -58,6 +61,28 @@ const PlaylistForm = ({
 				placeholder='enter your Spotify playlist url'
 				className={!isValidUrl ? 'invalid' : ''}
 			/>
+			<div style={{ marginTop: '12px' }}>
+				<p style={{ marginBottom: '6px' }}>
+					To use a playlist you don’t own without connecting Spotify, make the
+					 playlist <strong>collaborative</strong> and invite{' '}
+					<strong>TwitchSafePlaylists</strong> as a collaborator.
+				</p>
+				<p style={{ marginTop: 0 }}>
+					If your playlist is private or not collaborative, click “Connect
+					 Spotify” first.
+				</p>
+			</div>
+			<div style={{ marginTop: '10px' }}>
+				{isAuthed ? (
+					<button type='button' onClick={onDisconnect}>
+						Disconnect Spotify
+					</button>
+				) : (
+					<button type='button' onClick={onConnect}>
+						Connect Spotify (optional)
+					</button>
+				)}
+			</div>
 			<button
 				onClick={onSubmit}
 				disabled={!isComplete}
